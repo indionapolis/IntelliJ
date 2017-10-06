@@ -3,6 +3,9 @@
  * Created by pavel on 06.10.2017.
  */
 public class RedBlackTree {
+    public static void main(String[] args) {
+        System.out.println("hello");
+    }
 
 
 
