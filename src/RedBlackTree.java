@@ -1,216 +1,225 @@
-import com.sun.org.apache.regexp.internal.RE;
-
 /**
  * Project name: HomeWork
  * Created by pavel on 06.10.2017.
  */
 public class RedBlackTree<K,V>{
-    private Entry root;
+    private Node root;
     private static final boolean RED = true;
     private static final boolean BLACK = false;
 
 
-
-
+    /**
+     *
+     * @param key
+     * @return
+     */
     public V get(K key)
     {  return get(root, key);  }
 
-    private V get(Entry x, K key)
+    private V get(Node node, K key)
     {  // Return value associated with key in the subtree rooted at x;
         // return null if key not present in subtree rooted at x.
-        if (x == null) return null;
-        int cmp = x.compareTo(key);
-        if      (cmp < 0) return get(x.left, key);
-        else if (cmp > 0) return get(x.right, key);
-        else return (V) x.value;
+        if (node == null) return null;
+        if      (node.compareTo(key) < 0) return get(node.left, key);
+        else if (node.compareTo(key) > 0) return get(node.right, key);
+        else return (V) node.value;
     }
 
 
-
-    public void put(K key, V val)
+    /**
+     *
+     * @param key
+     * @param val
+     */
+    public void add(K key, V val)
     {  // Search for key. Update value if found; grow table if new.
-        root = put(root, key, val);
+        root = add(root, key, val);
         root.color = BLACK;
     }
 
-    private Entry put(Entry x, K key, V value)
+    private Node add(Node node, K key, V value)
     {
         // Change key’s value to val if key in subtree rooted at x.
         // Otherwise, add new node to subtree associating key with val.
 
-        if (x == null) return new Entry(key, value, 1, RED);
+        if (node == null) return new Node(key, value, 1, RED);
 
-        int cmp = x.compareTo(key);
-        if (cmp < 0) x.left  = put(x.left,  key, value);
-        else if (cmp > 0) {
-            x.right = put(x.right, key, value);
-        } else x.value = value;
+        if (node.compareTo(key) < 0) node.left  = add(node.left,  key, value);
+        else if (node.compareTo(key) > 0) {
+            node.right = add(node.right, key, value);
+        } else node.value = value;
 
-        if (isRed(x.right) && !isRed(x.left))    x = rotateLeft(x);
-        if (isRed(x.left) && isRed(x.left.left)) x = rotateRight(x);
-        if (isRed(x.left) && isRed(x.right))     flipColors(x);
+        if (isRed(node.right) && !isRed(node.left))    node = rotateLeft(node);
+        if (isRed(node.left) && isRed(node.left.left)) node = rotateRight(node);
+        if (isRed(node.left) && isRed(node.right))     flipColors(node);
 
-        x.N = size(x.left) + size(x.right) + 1;
+        node.nodes = size(node.left) + size(node.right) + 1;
 
-        return x;
+        return node;
+    }
+
+
+    /**
+     *
+     * @param key
+     */
+    public void delete(K key)
+    {  root = delete(root, key);  }
+
+    private Node delete(Node node, K key)
+    {
+        if (node == null) return null;
+        if (node.compareTo(key) < 0) node.left  = delete(node.left,  key);
+        else if (node.compareTo(key) > 0) node.right = delete(node.right, key);
+        else
+        {
+            if (node.right == null) return node.left;
+            if (node.left == null) return node.right;
+            Node min = node;
+            node = min(min.right);
+            node.right = deleteMin(min.right);
+            node.left = min.left;
+        }
+        node.nodes = size(node.left) + size(node.right) + 1;
+        return node;
     }
 
 
 
-    public void deleteMin()
+
+
+
+
+    private void deleteMin()
     {
         root = deleteMin(root);
     }
 
-    private Entry deleteMin(Entry x)
+
+    private Node deleteMin(Node node)
     {
-        if (x.left == null) return x.right;
-        x.left = deleteMin(x.left);
-        x.N = size(x.left) + size(x.right) + 1;
-        return x;
+        if (node.left == null) return node.right;
+        node.left = deleteMin(node.left);
+        node.nodes = size(node.left) + size(node.right) + 1;
+        return node;
     }
 
 
-    public K min()
+    private K min()
     {
         return (K) min(root).key;
     }
 
-    private Entry min(Entry x)
+
+    private Node min(Node node)
     {
-        if (x.left == null) return x;
-        return min(x.left);
+        if (node.left == null) return node;
+        return min(node.left);
     }
 
 
-    public void delete(K key)
-    {  root = delete(root, key);  }
 
-    private Entry delete(Entry x, K key)
+
+
+
+    private Node rotateLeft(Node node)
     {
-        if (x == null) return null;
-        int cmp = x.compareTo(key);
-        if      (cmp < 0) x.left  = delete(x.left,  key);
-        else if (cmp > 0) x.right = delete(x.right, key);
-        else
-        {
-            if (x.right == null) return x.left;
-            if (x.left == null) return x.right;
-            Entry t = x;
-            x = min(t.right);  // See page 407.
-            x.right = deleteMin(t.right);
-            x.left = t.left;
+        Node newentry = node.right;
+        node.right = newentry.left;
+        newentry.left = node;
+        newentry.color = node.color;
+        node.color = RED;
+        newentry.nodes = node.nodes;
+        node.nodes = 1 + size(node.left) + size(node.right);
+        return newentry;
+    }
+
+    private Node rotateRight(Node node)
+    {
+        Node newentry = node.left;
+        node.left = newentry.right;
+        newentry.right = node;
+        newentry.color = node.color;
+        node.color = RED;
+        newentry.nodes = node.nodes;
+        node.nodes = 1 + size(node.left) + size(node.right);
+        return newentry;
+    }
+
+    void flipColors(Node node)
+    {
+        node.color = RED;
+        node.left.color = BLACK;
+        node.right.color = BLACK;
+    }
+
+    private boolean isRed(Node node)
+    {
+        if (node == null) return false;
+        return node.color == RED;
+    }
+
+
+    public int size()
+    {  return size(root);  }
+
+    private int size(Node node)
+    {
+        return (node == null) ? 0 : node.nodes;
+    }
+
+
+    public void display(){
+        display(root);
+    }
+
+    private void display(Node root){
+        if(root != null){
+            display(root.left);
+            System.out.println("key: " + root.key + " value: " + root.value);
+            display(root.right);
         }
-        x.N = size(x.left) + size(x.right) + 1;
-        return x;
     }
 
 
-    Entry rotateLeft(Entry h)
-    {
-        Entry x = h.right;
-        h.right = x.left;
-        x.left = h;
-        x.color = h.color;
-        h.color = RED;
-        x.N = h.N;
-        h.N = 1 + size(h.left) + size(h.right);
-        return x;
-    }
-
-    Entry rotateRight(Entry h) {
-        Entry x = h.left;
-        h.left = x.right;
-        x.right = h;
-        x.color = h.color;
-        h.color = RED;
-        x.N = h.N;
-        h.N = 1 + size(h.left)
-                + size(h.right);
-        return x;
-    }
-
-    void flipColors(Entry h)
-    {
-        h.color = RED;
-        h.left.color = BLACK;
-        h.right.color = BLACK;
-    }
-
-
-
-
-        private class Entry<K,V>{
+    private class Node<K,V>{
         private K key;
         private V value;
         boolean color;
-        int N;
-        Entry<K, V> left;
-        Entry<K, V> right;
-        Entry<K, V> parent;
+        int nodes;
+        Node<K, V> left;
+        Node<K, V> right;
 
 
-        Entry(K key, V value, int N, boolean color) {
+        Node(K key, V value, int nodes, boolean color) {
             this.key = key;
             this.value = value;
-            //this.parent = parent;
             this.color = color;
-            this.N = N;
-        }
-
-        Entry predecessor(){
-            return parent;
+            this.nodes = nodes;
         }
 
 
-        Entry findSuccessor(Entry node) {
-            if (node == null) return null;
-            if (node.right != null){                 //to the left as far as possible
-                Entry z = node.right;
-                for (; z.left != null ; z = z.left);
-                return z;
-            }
-
-
-            Entry y = node.parent;
-            Entry x = node;
-            while (y != null && x == y.right) { //while x is right child of y
-                x = y;
-                y = y.parent;
-            }
-            //Intuition: as we traverse left up the tree we traverse smaller values
-            //The first node on the right is the next larger number
-            return y;
-        }
 
         public int compareTo(K key){
-            try {
+            try
+            {
                 return compareTo(Integer.parseInt(key.toString()), (Integer.parseInt(this.key.toString())));
-            }finally {
-
-                /*try {
-                    return compareTo(Integer.parseInt(key.toString()), this.key.toString());
-                }finally {
-                    try {
-                        return compareTo(key.toString(), Integer.parseInt(this.key.toString()));
-                    }finally {
-                        return compareTo(key.toString(), this.key.toString());
-                    }
-                }*/
             }
-
+            catch (java.lang.NumberFormatException e)
+            {
+                try
+                {
+                    return compareTo(key.toString(), this.key.toString());
+                }
+                catch (java.lang.NumberFormatException h)
+                {
+                    return -1;
+                }
+            }
         }
 
         public int compareTo(int a, int b){
             return a - b;
-        }
-
-        public int compareTo(String a, int b){
-            return -1;
-        }
-
-        public int compareTo(int a, String b){
-            return 1;
         }
 
         public int compareTo(String a, String b){
@@ -219,17 +228,4 @@ public class RedBlackTree<K,V>{
 
     }
 
-    public int size()
-    {  return size(root);  }
-
-    private int size(Entry x)
-    {
-        return (x == null) ? 0 : x.N;
-    }
-
-    private boolean isRed(Entry some)
-    {
-        if (some == null) return false;
-        return some.color == RED;
-    }
 }
