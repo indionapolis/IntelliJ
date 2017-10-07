@@ -8,32 +8,15 @@ public class RedBlackTree<K,V>{
     private static final boolean BLACK = false;
 
 
-    /**
-     *
-     * @param key
-     * @return
-     */
-    public V get(K key)
-    {  return get(root, key);  }
-
-    private V get(Node node, K key)
-    {  // Return value associated with key in the subtree rooted at x;
-        // return null if key not present in subtree rooted at x.
-        if (node == null) return null;
-        if      (node.compareTo(key) < 0) return get(node.left, key);
-        else if (node.compareTo(key) > 0) return get(node.right, key);
-        else return (V) node.value;
-    }
-
 
     /**
-     *
+     * Search for key. Update value if found; grow table if new.
      * @param key
-     * @param val
+     * @param value
      */
-    public void add(K key, V val)
-    {  // Search for key. Update value if found; grow table if new.
-        root = add(root, key, val);
+    public void add(K key, V value)
+    {
+        root = add(root, key, value);
         root.color = BLACK;
     }
 
@@ -57,6 +40,26 @@ public class RedBlackTree<K,V>{
 
         return node;
     }
+
+
+
+    /**
+     *
+     * @param key
+     * @return
+     */
+    public V get(K key)
+    {  return get(root, key);  }
+
+    private V get(Node node, K key)
+    {   // Return value associated with key in the subtree rooted at x;
+        // Return null if key not present in subtree rooted at x.
+        if (node == null) return null;
+        if      (node.compareTo(key) < 0) return get(node.left, key);
+        else if (node.compareTo(key) > 0) return get(node.right, key);
+        else return (V) node.value;
+    }
+
 
 
     /**
@@ -87,15 +90,6 @@ public class RedBlackTree<K,V>{
 
 
 
-
-
-
-    private void deleteMin()
-    {
-        root = deleteMin(root);
-    }
-
-
     private Node deleteMin(Node node)
     {
         if (node.left == null) return node.right;
@@ -105,18 +99,11 @@ public class RedBlackTree<K,V>{
     }
 
 
-    private K min()
-    {
-        return (K) min(root).key;
-    }
-
-
     private Node min(Node node)
     {
         if (node.left == null) return node;
         return min(node.left);
     }
-
 
 
 
@@ -180,6 +167,7 @@ public class RedBlackTree<K,V>{
             display(root.right);
         }
     }
+
 
 
     private class Node<K,V>{
