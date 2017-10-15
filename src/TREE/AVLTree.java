@@ -96,6 +96,33 @@ public class AVLTree<K extends Comparable<K>, V> {
         }
     }
 
+    public boolean isBalanced(){
+        return isBalanced(root);
+
+    }
+    private boolean isBalanced(Node current) {
+        return Math.abs(height(current.left) - height(current.right)) <= 1;
+    }
+
+
+
+
+
+
+
+    private void rebalance(){
+
+    }
+
+
+
+
+
+
+
+
+
+
 
 
     private class Node<K,V>{
