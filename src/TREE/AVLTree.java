@@ -57,15 +57,70 @@ public class AVLTree<K extends Comparable<K>, V> {
             root = new Node(key, value, null);
         } else {
             if (other.compareTo(key) < 0) {
-                other.left = new Node(key, value, other.left);
+                other.left = new Node(key, value, other);
             } else {
-                other.right = new Node(key, value, other.right);
+                other.right = new Node(key, value, other);
             }
         }
+
+
+        balanceBranch(other);
     }
 
 
 
+    /**
+     *
+     * @param key
+     * @return
+     */
+    public V remove(K key) {
+        Node current = root, other = null;
+        while (current != null) {
+            if (current.compareTo(key) == 0) {
+                break;
+            } else {
+                other = current;
+                if (current.compareTo(key) < 0) {
+                    current = current.left;
+                } else {
+                    current = current.right;
+                }
+            }
+        }
+
+
+
+        if (current == null) {
+            return null;
+        }
+        if (current.right == null) {
+            if (other == null) {
+                root = current.left;
+            } else {
+                if (current == other.left) {
+                    other.left = current.left;
+                } else {
+                    other.right = current.left;
+                }
+            }
+        } else {
+            Node leftMost = current.right;
+            other = null;
+            while (leftMost.left != null) {
+                other = leftMost;
+                leftMost = leftMost.left;
+            }
+            if (other != null) {
+                other.left = leftMost.right;
+            } else {
+                current.right = leftMost.right;
+            }
+            current.key = leftMost.key;
+            current.value = leftMost.value;
+        }
+        return (V) current.value;
+    }
 
 
     /**
@@ -98,30 +153,82 @@ public class AVLTree<K extends Comparable<K>, V> {
 
     public boolean isBalanced(){
         return isBalanced(root);
-
     }
+
     private boolean isBalanced(Node current) {
+        if (height(current) == 0 || current == null) return true;
         return Math.abs(height(current.left) - height(current.right)) <= 1;
     }
 
+    //TODO ребалансить по восходящей, пока не сбалансируется
+    //TODO доделать балансировку при вставке и удалении на каждом уровне
 
 
-
-
-
-
-    private void rebalance(){
-
+    private Node rebalance(Node current){
+        if (height(current.right) > height(current.left)){
+            if (height(current.right.right) > height(current.right.left)){
+                //case1
+                Node y = current.right;
+                y.parent = current.parent;
+                current.parent = y;
+                current.right = y.left;
+                y.left = current;
+                return y;
+            }else {
+                //case3
+                Node x = current.right.left;
+                Node y = current.right;
+                Node z = current;
+                x.parent = current.parent;
+                z.right = x.left;
+                y.left = x.right;
+                x.left = z;
+                x.right = y;
+                z.parent = x;
+                y.parent = x;
+                return x;
+            }
+        }else {
+            if (height(current.left.right) > height(current.left.left)){
+                //case2
+                Node x = current.left.right;
+                Node y = current.left;
+                Node z = current;
+                x.parent = current.parent;
+                z.left = x.right;
+                y.right = x.left;
+                x.right = z;
+                x.left = y;
+                z.parent = x;
+                y.parent = x;
+                return x;
+            }else {
+                //case4
+                Node y = current.left;
+                y.parent = current.parent;
+                current.parent = y;
+                current.left = y.right;
+                y.right = current;
+                return y;
+            }
+        }
     }
 
+    private void balanceBranch(Node other){
+        while (other != null) {
+            if (!isBalanced(other.left)) {
+                other.left = rebalance(other.left);
+            }
+            if (!isBalanced(other.right)) {
+                other.right = rebalance(other.right);
+            }
+            other = other.parent;
+        }
+        if (!isBalanced()) {
+            root = rebalance(root);
 
-
-
-
-
-
-
-
+        }
+    }
 
 
 
@@ -133,7 +240,7 @@ public class AVLTree<K extends Comparable<K>, V> {
         Node<K, V> right;
 
 
-        Node(K key, V value,Node parent) {
+        Node(K key, V value, Node parent) {
             this.key = key;
             this.value = value;
             this.parent = parent;
