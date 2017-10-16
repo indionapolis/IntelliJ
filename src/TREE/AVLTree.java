@@ -63,7 +63,6 @@ public class AVLTree<K extends Comparable<K>, V> {
             }
         }
 
-
         balanceBranch(other);
     }
 
