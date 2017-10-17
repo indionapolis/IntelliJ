@@ -131,11 +131,23 @@ public class AVLTree<K extends Comparable<K>, V> {
         display(root);
     }
 
-    public void display(Node root){
+    private void display(Node root){
         if(root!=null){
             display(root.left);
             System.out.println("key: " + root.key + " value: " + root.value);
             display(root.right);
+        }
+    }
+
+    public void displayTree(){
+        displayTree(root, "");
+    }
+
+    private void displayTree(Node root , String lvl){
+        if(root!=null){
+            displayTree(root.left, lvl + "   ");
+            System.out.println(lvl + "(" + root.key + ")");
+            displayTree(root.right, lvl + "   ");
         }
     }
 
@@ -170,7 +182,7 @@ public class AVLTree<K extends Comparable<K>, V> {
     }
 
     private boolean isBalanced(Node current) {
-        if (height(current) == 0 || current == null) return true;
+        if (current == null) return true;
         return Math.abs(height(current.left) - height(current.right)) <= 1;
     }
 
@@ -183,6 +195,7 @@ public class AVLTree<K extends Comparable<K>, V> {
      * @return
      */
     private Node rebalance(Node current){
+        if (height(current) < 3) return current;
         if (height(current.right) > height(current.left)){
             if (height(current.right.right) > height(current.right.left)){
                 //case1
@@ -245,9 +258,9 @@ public class AVLTree<K extends Comparable<K>, V> {
             }
             other = other.parent;
         }
+
         if (!isBalanced()) {
             root = rebalance(root);
-
         }
     }
 
