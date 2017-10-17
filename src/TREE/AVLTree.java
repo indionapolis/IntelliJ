@@ -74,7 +74,8 @@ public class AVLTree<K extends Comparable<K>, V> {
      * @return
      */
     public V remove(K key) {
-        Node current = root, other = null;
+        Node current = root;
+        Node other = null;
         while (current != null) {
             if (current.compareTo(key) == 0) {
                 break;
@@ -88,11 +89,12 @@ public class AVLTree<K extends Comparable<K>, V> {
             }
         }
 
-
-
         if (current == null) {
             return null;
         }
+
+        V ret = (V) current.value;
+
         if (current.right == null) {
             if (other == null) {
                 root = current.left;
@@ -118,7 +120,10 @@ public class AVLTree<K extends Comparable<K>, V> {
             current.key = leftMost.key;
             current.value = leftMost.value;
         }
-        return (V) current.value;
+
+        balanceBranch(other);
+
+        return ret;
     }
 
 
@@ -145,9 +150,9 @@ public class AVLTree<K extends Comparable<K>, V> {
 
     private void displayTree(Node root , String lvl){
         if(root!=null){
-            displayTree(root.left, lvl + "   ");
+            displayTree(root.left, lvl + "      ");
             System.out.println(lvl + "(" + root.key + ")");
-            displayTree(root.right, lvl + "   ");
+            displayTree(root.right, lvl + "      ");
         }
     }
 
