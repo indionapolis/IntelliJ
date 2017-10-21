@@ -1,5 +1,7 @@
 package TREE;
 
+import SEP2017.LinkedQueue;
+
 /**
  * Project name: HomeWork
  * Created by pavel on 30.09.2017.
@@ -127,22 +129,46 @@ public class BinarySearchTree<K extends Comparable<K>> implements BST {
     private void display(Node root , String lvl){
         if(root != null){
             display(root.left, lvl + "    ");
-            System.out.println(lvl + "key: " + root.key);
+            System.out.println(lvl + root.key);
             display(root.right, lvl + "    ");
         }
     }
 
     private String toStr(Node node){
         if(node != null){
-            return ( toStr(node.left) + "" + node.key + " " + toStr(node.right));
+            return ( toStr(node.left) + node.key + " " + toStr(node.right) );
         }
         return "";
     }
 
 
+    public String mirror(){
+        return mirror(root);
+    }
 
 
+    private String mirror(Node node){
+        String srt = "";
+        if (node == null || (node.right == null && node.left == null)) return "";
+        else srt += node.key + " ";
+        if (node.left != null) srt += node.left.key + " ";
+        if (node.right != null) srt += node.right.key + " ";
+        return (srt +  "\n");
+    }
 
+    public String wtr() {
+        String str = "";
+        LinkedQueue queue = new LinkedQueue();
+        queue.add(root);
+        while (queue.size() != 0){
+            Node tmp = (Node) queue.remove();
+            str += mirror(tmp);
+            if (tmp.left != null) queue.add(tmp.left);
+            if (tmp.right != null) queue.add(tmp.right);
+
+        }
+        return str;
+    }
 
     private class Node<K extends Comparable<K>, V>{
         private K key;
