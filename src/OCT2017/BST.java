@@ -1,25 +1,25 @@
-package TREE;
-
 /**
  * Project name: HomeWork
  * Created by pavel on 21.10.2017.
+ * Pavel Nikulin BS1-8 ©
+ * v0.0
  */
-public interface BST<K extends Comparable<K>, V>{
+public interface BST<K extends Comparable<K>>{
 
     /**
      *  returns all entries with key if they exist, null otherwise.
      */
-    V find(K key);
+    K find(K key);
 
     /**
-     *  inserts an entry with key key.
+     *  inserts an entry with key.
      */
-    void insert(K key, V value);
+    void insert(K key);
 
     /**
-     *  removes all entries with key k.
+     *  removes all entries with key.
      */
-    V remove(K key);
+    K remove(K key);
 
     /**
      *  gets the string of the inorder traversal of the tree.
@@ -29,6 +29,6 @@ public interface BST<K extends Comparable<K>, V>{
     /**
      *  prints out the tree.
      */
-    void print();
+    String print();
 
 }
