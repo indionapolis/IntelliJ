@@ -1,4 +1,5 @@
-package TREE;
+import IMPORTANT.LinkedQueue;
+
 import java.util.Arrays;
 /**
  * Project name: HomeWork
@@ -11,21 +12,6 @@ public class BinaryHeap<K extends Comparable<K>, V> {
     private Node[] array;
     private int size;
 
-
-    public static void main(String[] args) {
-        BinaryHeap heap = new BinaryHeap();
-        heap.insert(2, 8);
-        heap.insert(6, 8);
-        heap.insert(3, 8);
-        heap.insert(1, 8);
-        heap.insert(4, 8);
-        heap.insert(9, 8);
-        heap.insert(0, 8);
-        heap.insert(6, 8);
-        while (!heap.isEmpty()){
-            System.out.println(heap.removeMin());
-        }
-    }
 
 
     /**
@@ -44,8 +30,10 @@ public class BinaryHeap<K extends Comparable<K>, V> {
 
     /**
      * Add a value to the heap.
+     * @param key
+     * @param value
      */
-    public void insert(K key, V value) {
+    public void insert(int key, Object value) {
         if (isFull()) {
             resize();
         }
@@ -136,6 +124,16 @@ public class BinaryHeap<K extends Comparable<K>, V> {
         }
     }
 
+    public void upData(){
+        LinkedQueue queue = new LinkedQueue();
+        while (!isEmpty()){
+            queue.add(removeMin());
+        }
+        while (!queue.isEmpty()){
+            insert(((Graph.Vertex)queue.peek()).key, queue.remove());
+        }
+    }
+
 
     protected boolean hasParent(int i) {
         return i > 1;
@@ -168,7 +166,7 @@ public class BinaryHeap<K extends Comparable<K>, V> {
     }
 
 
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return size == 0;
     }
 
