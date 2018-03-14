@@ -1,3 +1,5 @@
+package IMPORTANT;
+
 import IMPORTANT.LinkedQueue;
 
 import java.util.Arrays;
@@ -15,7 +17,7 @@ public class BinaryHeap<K extends Comparable<K>, V> {
 
 
     /**
-     * Constructs a new BinaryHeap.
+     * Constructs a new IMPORTANT.BinaryHeap.
      */
     public BinaryHeap() {
         this(DEF_CAPACITY);
@@ -124,15 +126,17 @@ public class BinaryHeap<K extends Comparable<K>, V> {
         }
     }
 
-    public void upData(){
+
+    /*public void upData(){
         LinkedQueue queue = new LinkedQueue();
         while (!isEmpty()){
             queue.add(removeMin());
         }
         while (!queue.isEmpty()){
-            insert(((Graph.Vertex)queue.peek()).key, queue.remove());
+            insert(((NOV2017.Graph.Vertex)queue.peek()).key, queue.remove());
         }
     }
+    */
 
 
     protected boolean hasParent(int i) {
